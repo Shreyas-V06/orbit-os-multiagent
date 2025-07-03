@@ -1,3 +1,4 @@
 venv
 .env
 experiments.ipynb
+__pycache__
