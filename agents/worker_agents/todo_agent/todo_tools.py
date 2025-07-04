@@ -1,6 +1,5 @@
 from initializers.initialize_db import initialize_db
 from initializers.initialize_llm import *
-from schemas.agent_state import AgentState
 from schemas.todo_schemas import TodoBase
 from bson import ObjectId
 from langchain_core.tools import tool
@@ -15,7 +14,7 @@ def get_todo_by_id(todo_id):
     return todo
 
 
-def createtodo_base(todo_object:TodoBase):
+def create_todo_base(todo_object:TodoBase):
     collection=db.todos
     user_id=user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
     todo_name=todo_object.todo_name
@@ -31,14 +30,14 @@ def createtodo_base(todo_object:TodoBase):
     todo={"user_id":user_id,"todo_name":todo_name,"todo_checkbox":todo_checkbox,"todo_duedate":todo_duedate}
     collection.insert_one(todo)
 
-def gettodos_base():
+def get_todos_base():
     user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
     collection=db.todos
     todo_list=collection.find({"user_id":user_id})
     return list(todo_list)
 
 
-def updatetodo_base(todo_object:TodoBase):
+def update_todo_base(todo_object:TodoBase):
     collection=db.todos
     todo_id=ObjectId(todo_object.todo_id)
     user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
@@ -60,13 +59,13 @@ def updatetodo_base(todo_object:TodoBase):
     collection.update_one({"_id":todo_id},updates)
 
 
-def deletetodo_base(todo_object:TodoBase):
+def delete_todo_base(todo_object:TodoBase):
     collection=db.todos
     todo_id=ObjectId(todo_object.todo_id)
     collection.delete_one({"_id":todo_id})
 
 @tool
-def createtodo_tool(query:str):
+def create_todo_tool(query:str):
 
     """Creates a new todo task for the user. Use this tool whenever the user wants to create a task/todo
   You must include all the details:
@@ -81,12 +80,12 @@ def createtodo_tool(query:str):
     llm=initialize_parserllm()
     llm_wso=llm.with_structured_output(TodoBase)
     todo_object = llm_wso.invoke(query)
-    createtodo_base(todo_object)
+    create_todo_base(todo_object)
 
     return "Created Sucessfully"
 
 @tool
-def updatetodo_tool(query:str):
+def update_todo_tool(query:str):
 
     """
   Updates an already existing todo task for the user. Use this tool whenever the user wants to update a task/todo.
@@ -103,12 +102,12 @@ def updatetodo_tool(query:str):
     llm=initialize_parserllm()
     llm_wso=llm.with_structured_output(TodoBase)
     todo_object = llm_wso.invoke(query)
-    updatetodo_base(todo_object)
+    update_todo_base(todo_object)
 
     return "Updated Sucessfully"
 
 @tool 
-def gettodos_tool():
+def get_todos_tool():
 
     """ this tool returns list of all the todos created,
     Use this function whenever you want to get details of the todos for
@@ -116,11 +115,11 @@ def gettodos_tool():
 
     """
 
-    all_todos=gettodos_base()
+    all_todos=get_todos_base()
     return all_todos
 
 @tool
-def deletetodo_tool(todo_id: str):
+def delete_todo_tool(todo_id: str):
 
     """
     This tool will delete the todo. 
@@ -130,7 +129,7 @@ def deletetodo_tool(todo_id: str):
     llm = initialize_parserllm()
     llm_wso = llm.with_structured_output(TodoBase)
     todo_object = llm_wso.invoke(todo_id)
-    deletetodo_base(todo_object)
+    delete_todo_base(todo_object)
     return "Deleted Sucessfully "
 
 

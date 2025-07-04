@@ -1,4 +1,4 @@
-from agents.worker_agents.rag_tools import *
+from agents.worker_agents.rag_agent.rag_tools import *
 from initializers.initialize_llm import *
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import SystemMessage
@@ -7,7 +7,7 @@ from schemas.agent_state import AgentState
 
 tools=[query_File_tool]
 
-def ragagent_brain(state:AgentState) -> AgentState:
+def rag_agent_brain(state:AgentState) -> AgentState:
     system_prompt = SystemMessage(content=
     """You are a document agent working under a supervisor.
     Your role is to assist with answering the user's questions about uploaded documents using the tool below.
@@ -43,7 +43,7 @@ tool_node = ToolNode(tools=tools)
 
 
 graph=StateGraph(AgentState)
-graph.add_node("RAG Agent",ragagent_brain)
+graph.add_node("RAG Agent",rag_agent_brain)
 graph.add_node("RAG tool",tool_node)
 graph.add_conditional_edges(
     "RAG Agent",

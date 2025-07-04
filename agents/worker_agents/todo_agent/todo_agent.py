@@ -1,14 +1,15 @@
-from agents.worker_agents.database_tools import *
+from agents.worker_agents.todo_agent.todo_tools import *
 from initializers.initialize_llm import *
+from schemas.agent_state import AgentState
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import SystemMessage
 from langgraph.graph import StateGraph, END
 
-tools=[createtodo_tool,deletetodo_tool,gettodos_tool,updatetodo_tool,time_today]
+tools=[create_todo_tool,delete_todo_tool,get_todos_tool,update_todo_tool,time_today]
 
-def datbaseagent_brain(state:AgentState) -> AgentState:
+def todo_agent_brain(state:AgentState) -> AgentState:
     system_prompt = SystemMessage(content=
-    """You are a database agent working under a supervisor. 
+    """You are a todo agent working under a supervisor. 
     Your task is to use the correct tools to perform CRUD operations on the user's todos.
 
     You have access to 5 tools:
@@ -30,7 +31,7 @@ def datbaseagent_brain(state:AgentState) -> AgentState:
     - todo_duedate  
     Never ask the user for todo_id or unchanged fields—fetch them using get_todos_tool, then update only the intended part.
 
-    tool3: delete_todo(todo_id)  
+    tool3: delete_todo_tool(todo_id)  
     Deletes a todo by ID. Use get_todos_tool to find the correct todo_id.  
     Never ask the user for this.
 
@@ -66,18 +67,18 @@ tool_node = ToolNode(tools=tools)
 
 
 graph=StateGraph(AgentState)
-graph.add_node("Database Agent",datbaseagent_brain)
-graph.add_node("Database tools",tool_node)
+graph.add_node("Todo Agent",todo_agent_brain)
+graph.add_node("Todo tools",tool_node)
 graph.add_conditional_edges(
-    "Database Agent",
+    "Todo Agent",
     should_continue,
     {
-        "continue": "Database tools",
+        "continue": "Todo tools",
         "end": END,
     },
 )
-graph.add_edge("Database tools","Database Agent")
-graph.set_entry_point("Database Agent")
-database_agent_compiled=graph.compile()
+graph.add_edge("Todo tools","Todo Agent")
+graph.set_entry_point("Todo Agent")
+todo_agent_compiled=graph.compile()
 
 

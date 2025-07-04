@@ -15,3 +15,9 @@ def initialize_parserllm():
     genai.configure(api_key=GeminiApiKey)
     GeminiLLM = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
     return GeminiLLM
+
+def initialize_supervisorllm():
+    GeminiApiKey=os.getenv('GOOGLE_API_KEY')
+    genai.configure(api_key=GeminiApiKey)
+    GeminiLLM = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
+    return GeminiLLM
