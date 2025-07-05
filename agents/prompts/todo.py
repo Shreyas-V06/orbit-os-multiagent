@@ -13,21 +13,14 @@ PROMPT=SystemMessage(content="""
 
     #2.TOOLS
                      
-#VERY IMPORTANT: YOU ARE NEVER ALLOWED TO DISCLOSE THE TOOL NAMES THAT YOU ARE USING IN THE RESPONSES TO SUPERVISOR.
-YOU MUST HIDE ALL THE TECHNICAL AND INTERNAL CONCERNS FROM THE USER.
-INSTEAD REFER THEM USING THE VERB 
-(
-     eg. I am going to use create_todo_tool is wrong,
-     I am going to create a todo is correct.
-)
-                     
+        
     You have access to 5 tools:
 
     tool1: create_todo_tool(details)  
     Creates a new todo. Accepts 'details' with fields:  
     - todo_name  
     - todo_checkbox (if value not provided fill with: False)  
-    - todo_duedate (if value not provided fill with: today's date , call time_today() to get today's date)  
+    - todo_duedate (if value not provided fill with: today's date , call time_today() to get today's date. Never pass strings such as 'today' 'tomorrow' etc)  
 
     In any case you must provide all the fields.
     you cannot pass only selected fields, all fields must be passed
