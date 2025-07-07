@@ -3,7 +3,6 @@ from initializers.initialize_llm import *
 from agents.prompts.todo import PROMPT
 from schemas.agent_state import AgentState
 from langgraph.prebuilt import ToolNode
-from langchain_core.messages import SystemMessage
 from langgraph.graph import StateGraph, END
 
 tools=[create_todo_tool,delete_todo_tool,get_todos_tool,update_todo_tool,time_today]
@@ -14,7 +13,7 @@ def todo_agent_brain(state:AgentState) -> AgentState:
     llm=initialize_agentllm()
     llm_with_tool=llm.bind_tools(tools)
     response = llm_with_tool.invoke([system_prompt] + state["messages"])
-    print("RESPONSE FROM TODO AGENT:",response.content,"\n")
+    # print("RESPONSE FROM AGENT:",response.content,"\n")
     state['messages']=response
     return state
 

@@ -6,7 +6,7 @@ from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import Depends, FastAPI, HTTPException, status
 from initializers.initialize_db import initialize_db
-from bson import ObjectId
+
 db=initialize_db()
 collection=db.users
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -91,10 +91,10 @@ async def read_users_me(current_user: UserPublic = Depends(get_current_active_us
 
 @app.get("/users/me/uid", response_model=str)
 def get_user_id(current_user:UserPublic=Depends(read_users_me)):
-    username=current_user.username
-    user=dict(collection.find_one({"username":username}))
-    user_id=user['_id']
-    return str(user_id)
-
+    # username=current_user.username
+    # user=dict(collection.find_one({"username":username}))
+    # user_id=user['_id']
+    test='68600e91dbfd7b77a1e5cc97'
+    return test
 
 

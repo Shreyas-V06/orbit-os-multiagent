@@ -20,7 +20,7 @@ def planneragent_brain(state:AgentState) -> AgentState:
     llm=initialize_agentllm()
     llm_with_tool=llm.bind_tools(tools)
     response = llm_with_tool.invoke([system_prompt] + state["messages"])
-    print("PLANNER AGENT RESPONSE: ",response.content,"\n")
+    # print("PLANNER AGENT RESPONSE: ",response.content,"\n")
     state['messages']=response
     return state
 
@@ -29,10 +29,10 @@ def finalize_project(state:AgentState) -> ProjectBase:
     llm = initialize_parserllm()
     last_message=state["messages"][-1]
     if isinstance(last_message,ToolMessage):
-        print("Skipping insertion: last message is a tool call.\n")
+        # print("Skipping insertion: last message is a tool call.\n")
         return None
     query=last_message.content
-    print("QUERY IS:",query,"\n")
+    # print("QUERY IS:",query,"\n")
     llm_wso = llm.with_structured_output(ProjectBase)
     project_object=llm_wso.invoke(query)
     user_id=ObjectId(get_user_id())

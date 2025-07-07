@@ -13,7 +13,7 @@ def search_agent_brain(state:AgentState) -> AgentState:
     llm=initialize_agentllm()
     llm_with_tool=llm.bind_tools(tools)
     response = llm_with_tool.invoke([system_prompt] + state["messages"])
-    print("RESPONSE FROM SEARCH AGENT:",response.content,"\n")
+    # print("RESPONSE FROM SEARCH AGENT:",response.content,"\n")
     state['messages']=response
     return state
 
