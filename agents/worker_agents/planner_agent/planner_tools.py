@@ -5,7 +5,7 @@ from langgraph.prebuilt import ToolNode
 from langgraph.graph import StateGraph, END
 from schemas.agent_state import AgentState
 from agents.handoff import create_handoff_tool
-
+from auth.utilities import get_user_id
 
 tools=[search_internet_tool]
 
@@ -44,5 +44,6 @@ graph.add_edge("Search tool","Search Agent")
 graph.set_entry_point("Search Agent")
 search_agent_compiled=graph.compile()
 
+graph=StateGraph(AgentState)
 graph.add_node("search_agent",search_agent_compiled)
 assign_to_search_agent=create_handoff_tool(agent_name="search_agent",description="Searches the internet to answer queiries")

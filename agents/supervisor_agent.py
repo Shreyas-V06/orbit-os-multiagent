@@ -2,6 +2,7 @@ from agents.worker_agents.todo_agent.todo_agent import todo_agent_compiled
 from agents.worker_agents.rag_agent.rag_agent import rag_agent_compiled
 from agents.worker_agents.search_agent.search_agent import search_agent_compiled
 from agents.worker_agents.reminder_agent.reminder_agent import reminder_agent_compiled
+from agents.worker_agents.planner_agent.planner_agent import planner_agent_compiled
 from agents.prompts.supervisor import PROMPT
 from agents.handoff import create_handoff_tool
 from initializers.initialize_llm import *
@@ -16,14 +17,15 @@ graph.add_node("todo_agent",todo_agent_compiled)
 graph.add_node("rag_agent",rag_agent_compiled)
 graph.add_node("search_agent",search_agent_compiled)
 graph.add_node("reminder_agent",reminder_agent_compiled)
+graph.add_node("planner_agent",planner_agent_compiled)
 
 assign_to_todo_agent=create_handoff_tool(agent_name="todo_agent",description="Performs CRUD operations on todos")
 assign_to_rag_agent=create_handoff_tool(agent_name="rag_agent",description="Answers questions regarding any document uploaded")
 assign_to_search_agent=create_handoff_tool(agent_name="search_agent",description="Searches the internet to answer queiries")
 assign_to_reminder_agent=create_handoff_tool(agent_name="reminder_agent",description="Performs CRUD operations on reminders")
+assign_to_planner_agent=create_handoff_tool(agent_name="planner_agent",description="Performs planning of projects and tasks")
 
-
-tools=[assign_to_todo_agent,assign_to_rag_agent,assign_to_search_agent,assign_to_reminder_agent]
+tools=[assign_to_todo_agent,assign_to_rag_agent,assign_to_search_agent,assign_to_reminder_agent,assign_to_planner_agent]
 tool_node = ToolNode(tools=tools)
 
 def supervisoragent_brain(state:AgentState) -> AgentState:

@@ -6,6 +6,7 @@ from jose import JWTError, jwt
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import Depends, FastAPI, HTTPException, status
 from initializers.initialize_db import initialize_db
+from fastapi import APIRouter
 
 db=initialize_db()
 collection=db.users
@@ -14,8 +15,7 @@ ALGORITHM =  os.getenv('ALGORITHM')
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-
-app=FastAPI()
+auth_router=APIRouter()
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -74,7 +74,7 @@ async def get_current_active_user(current_user: UserPrivate = Depends(get_curren
 
     return current_user
 
-@app.post("/token", response_model=Token)
+@auth_router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
@@ -84,17 +84,23 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/users/me/", response_model=UserPublic)
+@auth_router.get("/users/me/", response_model=UserPublic)
 async def read_users_me(current_user: UserPublic = Depends(get_current_active_user)):
     return current_user
 
 
-@app.get("/users/me/uid", response_model=str)
-def get_user_id(current_user:UserPublic=Depends(read_users_me)):
+@auth_router.get("/users/me/uid", response_model=str)
+async def get_user_id(current_user:UserPublic=Depends(read_users_me)):
     # username=current_user.username
     # user=dict(collection.find_one({"username":username}))
     # user_id=user['_id']
     test='68600e91dbfd7b77a1e5cc97'
     return test
 
+@auth_router.post("/register")
+async def register(username:str,password:str):
+    hashed_password=get_password_hash(password)
+    details={'username':username,'hashed_password':hashed_password}
+    collection.insert_one(details)
+    return {"Response":"Succesful"}
 
