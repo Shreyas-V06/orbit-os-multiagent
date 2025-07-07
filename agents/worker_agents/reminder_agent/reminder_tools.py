@@ -3,6 +3,7 @@ from initializers.initialize_llm import *
 from schemas.reminder_schemas import ReminderBase
 from bson import ObjectId
 from langchain_core.tools import tool
+from auth.utilities import get_user_id
 db=initialize_db()
 
 
@@ -16,7 +17,7 @@ def get_reminder_by_id(reminder_id):
 
 def create_reminder_base(reminder_object:ReminderBase):
     collection=db.reminders
-    user_id=user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
+    user_id=user_id=ObjectId(get_user_id())
     reminder_name=reminder_object.reminder_name
     reminder_duedate=reminder_object.reminder_duedate
 
@@ -27,7 +28,7 @@ def create_reminder_base(reminder_object:ReminderBase):
     collection.insert_one(reminder)
 
 def get_reminders_base():
-    user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
+    user_id=ObjectId(get_user_id())
     collection=db.reminders
     reminder_list=collection.find({"user_id":user_id})
     return list(reminder_list)
@@ -36,7 +37,7 @@ def get_reminders_base():
 def update_reminder_base(reminder_object:ReminderBase):
     collection=db.reminders
     reminder_id=ObjectId(reminder_object.reminder_id)
-    user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
+    user_id=ObjectId(get_user_id())
   
     reminder_name=reminder_object.reminder_name
     reminder_duedate=reminder_object.reminder_duedate

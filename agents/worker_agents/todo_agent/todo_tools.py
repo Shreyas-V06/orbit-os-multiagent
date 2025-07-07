@@ -3,6 +3,7 @@ from initializers.initialize_llm import *
 from schemas.todo_schemas import TodoBase
 from bson import ObjectId
 from langchain_core.tools import tool
+from auth.utilities import get_user_id
 db=initialize_db()
 
 
@@ -16,7 +17,7 @@ def get_todo_by_id(todo_id):
 
 def create_todo_base(todo_object:TodoBase):
     collection=db.todos
-    user_id=user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
+    user_id=ObjectId(get_user_id())
     todo_name=todo_object.todo_name
     todo_checkbox=todo_object.todo_checkbox
     todo_duedate=todo_object.todo_duedate
@@ -31,7 +32,7 @@ def create_todo_base(todo_object:TodoBase):
     collection.insert_one(todo)
 
 def get_todos_base():
-    user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
+    user_id=ObjectId(get_user_id())
     collection=db.todos
     todo_list=collection.find({"user_id":user_id})
     return list(todo_list)
@@ -40,7 +41,7 @@ def get_todos_base():
 def update_todo_base(todo_object:TodoBase):
     collection=db.todos
     todo_id=ObjectId(todo_object.todo_id)
-    user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
+    user_id=ObjectId(get_user_id())
   
     todo_name=todo_object.todo_name
     todo_checkbox=todo_object.todo_checkbox

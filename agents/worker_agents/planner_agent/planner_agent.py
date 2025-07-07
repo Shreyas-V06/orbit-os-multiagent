@@ -8,6 +8,7 @@ from schemas.plan_schema import ProjectBase
 from langgraph.prebuilt import ToolNode
 from bson import ObjectId
 from initializers.initialize_db import initialize_db
+from auth.utilities import get_user_id
 
 db=initialize_db()
 collection=db.projects
@@ -34,7 +35,7 @@ def finalize_project(state:AgentState) -> ProjectBase:
     print("QUERY IS:",query,"\n")
     llm_wso = llm.with_structured_output(ProjectBase)
     project_object=llm_wso.invoke(query)
-    user_id=ObjectId('68600e91dbfd7b77a1e5cc97')
+    user_id=ObjectId(get_user_id())
     project_name=project_object.project_name
     day_one=project_object.day_one
     day_two=project_object.day_two
