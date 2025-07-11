@@ -1,12 +1,16 @@
 from initializers.initialize_db import initialize_db
 from initializers.initialize_llm import *
-from schemas.todo_schemas import TodoBase
+from schemas.todo import TodoBase
 from bson import ObjectId
 from langchain_core.tools import tool
 from auth.utilities import get_user_id
+from fastapi import APIRouter
+
+todo_router=APIRouter()
 db=initialize_db()
 
 
+@todo_router.get('/todos/{todo_id}')
 def get_todo_by_id(todo_id):
 
     _id=ObjectId(todo_id)
@@ -14,7 +18,7 @@ def get_todo_by_id(todo_id):
     todo=collection.find_one({"_id":_id})
     return todo
 
-
+@todo_router.post('/todos/')
 def create_todo_base(todo_object:TodoBase):
     collection=db.todos
     user_id=ObjectId(get_user_id())
@@ -31,13 +35,14 @@ def create_todo_base(todo_object:TodoBase):
     todo={"user_id":user_id,"todo_name":todo_name,"todo_checkbox":todo_checkbox,"todo_duedate":todo_duedate}
     collection.insert_one(todo)
 
+@todo_router.get('/todos/')
 def get_todos_base():
     user_id=ObjectId(get_user_id())
     collection=db.todos
     todo_list=collection.find({"user_id":user_id})
     return list(todo_list)
 
-
+@todo_router.put('/todos/')
 def update_todo_base(todo_object:TodoBase):
     collection=db.todos
     todo_id=ObjectId(todo_object.todo_id)
@@ -60,6 +65,7 @@ def update_todo_base(todo_object:TodoBase):
     collection.update_one({"_id":todo_id},updates)
 
 
+@todo_router.delete('/todos')
 def delete_todo_base(todo_object:TodoBase):
     collection=db.todos
     todo_id=ObjectId(todo_object.todo_id)
@@ -134,16 +140,31 @@ def delete_todo_tool(todo_id: str):
     return "Deleted Sucessfully "
 
 
-@tool
 def time_today():
     """
     Returns the current date and time.
+    It accepts one parameter called "query".
+    This parameter is a dummy parameter, which will be ignored. 
+
+    ALWAYS FILL IT WITH "NOW".
+    This function will always return today's time and date.
+    regardless of the parameter you pass.
+
+    However whenever user asks you to use dates of "tomorrow",
+    "yesterday","five days from now",etc etc.
+    Use this tool, identify today's date and perform necessary calculations
+    to get the date required.
+
+    Example: required date is tomorrow
+    Tool response: today's date is 2025-7-20
+    Calculate tomorrow as today's date +1 , hence use 2025-7-21.
+
 """
     from datetime import datetime
     now = datetime.now()
     return {
-        "time": now.strftime("%H:%M:%S"),
-        "date": now.strftime("%Y-%m-%d")
+        "time now": now.strftime("%H:%M:%S"),
+        "today's date": now.strftime("%Y-%m-%d")
     }
 
 

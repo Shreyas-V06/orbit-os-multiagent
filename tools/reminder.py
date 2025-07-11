@@ -1,12 +1,15 @@
 from initializers.initialize_db import initialize_db
 from initializers.initialize_llm import *
-from schemas.reminder_schemas import ReminderBase
+from schemas.reminder import ReminderBase
 from bson import ObjectId
 from langchain_core.tools import tool
 from auth.utilities import get_user_id
+from fastapi import APIRouter
+
+reminder_router=APIRouter()
 db=initialize_db()
 
-
+@reminder_router.get('/reminders/{reminder_id}')
 def get_reminder_by_id(reminder_id):
 
     _id=ObjectId(reminder_id)
@@ -14,7 +17,7 @@ def get_reminder_by_id(reminder_id):
     reminder=collection.find_one({"_id":_id})
     return reminder
 
-
+@reminder_router.post('/reminders/')
 def create_reminder_base(reminder_object:ReminderBase):
     collection=db.reminders
     user_id=user_id=ObjectId(get_user_id())
@@ -27,13 +30,14 @@ def create_reminder_base(reminder_object:ReminderBase):
     reminder={"user_id":user_id,"reminder_name":reminder_name,"reminder_duedate":reminder_duedate}
     collection.insert_one(reminder)
 
+@reminder_router.get('/reminders/')
 def get_reminders_base():
     user_id=ObjectId(get_user_id())
     collection=db.reminders
     reminder_list=collection.find({"user_id":user_id})
     return list(reminder_list)
 
-
+@reminder_router.put('/reminders/')
 def update_reminder_base(reminder_object:ReminderBase):
     collection=db.reminders
     reminder_id=ObjectId(reminder_object.reminder_id)
@@ -53,6 +57,7 @@ def update_reminder_base(reminder_object:ReminderBase):
     collection.update_one({"_id":reminder_id},updates)
 
 
+@reminder_router.delete('/reminders/')
 def delete_reminder_base(reminder_object:ReminderBase):
     collection=db.reminders
     reminder_id=ObjectId(reminder_object.reminder_id)
@@ -127,7 +132,7 @@ def delete_reminder_tool(reminder_id: str):
     return "Deleted Sucessfully "
 
 
-@tool
+
 def time_today():
     """
     Returns the current date and time.
@@ -138,5 +143,4 @@ def time_today():
         "time": now.strftime("%H:%M:%S"),
         "date": now.strftime("%Y-%m-%d")
     }
-
 

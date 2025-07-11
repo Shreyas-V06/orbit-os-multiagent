@@ -90,7 +90,7 @@ async def read_users_me(current_user: UserPublic = Depends(get_current_active_us
 
 
 @auth_router.get("/users/me/uid", response_model=str)
-async def get_user_id(current_user:UserPublic=Depends(read_users_me)):
+def get_user_id(current_user:UserPublic=Depends(read_users_me)):
     # username=current_user.username
     # user=dict(collection.find_one({"username":username}))
     # user_id=user['_id']

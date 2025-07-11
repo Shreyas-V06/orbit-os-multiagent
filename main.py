@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from auth.utilities import auth_router
 from api.stream import stream_router
+from tools.todo import todo_router
+from tools.reminder import reminder_router
 
 app=FastAPI()
 app.add_middleware(
@@ -14,3 +16,5 @@ app.add_middleware(
 )
 app.include_router(stream_router)
 app.include_router(auth_router)
+app.include_router(todo_router)
+app.include_router(reminder_router)
